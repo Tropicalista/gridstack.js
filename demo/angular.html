@@ -11,7 +11,6 @@
     <title>Angular demo</title>
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="../dist/gridstack.css"/>
     <link rel="stylesheet" href="../dist/gridstack-extra.css"/>
 
@@ -30,14 +29,25 @@
 <body ng-app="GridStack" ng-controller="DemoCtrl">
     <div class="container-fluid">
         <h1>Angular demo</h1>
-
+        <p>{{widgets}} {{foo}}</p>
+        <div>
+            <a class="btn btn-primary" ng-click="addWidget()" href="#">Add Widget</a>
+        </div>
+        <br>
         <div class="row">
             <div class="col-md-12">
                 <div class="grid-stack grid1" ng-model="widgets" grid-stack>
                     <div class="grid-stack-item" 
                         data-gs-x="{{w.x}}" data-gs-y="{{w.y}}" 
                         data-gs-width="{{w.width}}" data-gs-height="{{w.height}}" ng-repeat="w in widgets" gridstack-item="widget">
-                            <div class="grid-stack-item-content">{{w.width}}</div>
+                            <div class="grid-stack-item-content">
+                                <ul>
+                                    <li>{{w.height}}</li>
+                                    <li>{{w.width}}</li>
+                                    <li>{{w.x}}</li>
+                                    <li>{{w.y}}</li>
+                                </ul>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -65,56 +75,43 @@
                 vertical_margin: 10
             };
 
+            $scope.addWidget = function() {
+                var newItem =
+                {
+                  x: 1  , y: Math.floor(Math.random() * 3) + 1  , width: 1, height: 1
+                };
+                $scope.widgets.push(newItem);
+            };
+
             $scope.widgets = [
-                {x: 0, y: 0, width: 2, height: 2},
+                /*{x: 0, y: 0, width: 2, height: 2},
                 {x: 2, y: 0, width: 4, height: 2},
                 {x: 6, y: 0, width: 2, height: 4},
-                {x: 1, y: 2, width: 4, height: 2}
+                {x: 8, y: 2, width: 2, height: 4}*/
             ];
 
         });
 
-        /*app.directive('gridStack', function () {
-            return {
-                restrict: 'A',
-                controller: 'GridstackController',
-                link: function (scope, element, attrs) {
-                    //var config = scope.$eval(attrs.gridStack); 
-                    //element.gridstack({cell_height: 80,vertical_margin: 10}).data('gridstack');
-                    scope.init(element, {});
-                    element.on('change', function (e, items) {
-                        var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
-                            el = $(el);
-                            var node = el.data('_gridstack_node');
-                            return {
-                                id: el.attr('data-custom-id'),
-                                x: node.x,
-                                y: node.y,
-                                width: node.width,
-                                height: node.height
-                            };
-                        }); 
-                        console.log(res)
-                    });
-
-                }
-            };
-        });*/
 
     app.controller('GridstackController', ['$scope', '$element', '$attrs',
         function($scope, $element, $attrs) {
-          this.scope = $scope;
-          this.element = $element;
 
           var gridstack = null;
           $scope.init = function(element, options) {
             gridstack = element.gridstack({}).data('gridstack');
-            console.log(gridstack)
             return gridstack;
           };
 
           $scope.serialize = function(res){
-            console.log('from controller', res)
+            //$scope.widgets = res;
+            //$scope.$apply();
+          }
+
+          this.removeItem = function(element){
+            if (gridstack) {
+              return gridstack.remove_widget(element);
+            }
+            return null;
           }
 
           this.addItem = function(element, sizeX, sizeY, col, row) {
@@ -125,18 +122,6 @@
           };
 
     }])
-
-        /*app.directive('gridstackItem', function () {
-            return {
-                restrict: 'A',
-                require: '^gridStack',
-                link: function (scope, element, attrs, controller) {
-                    console.log(element,attrs)
-                    var widget = controller.addItem(element, attrs.gsX,attrs.gsY,attrs.gsWidth,attrs.gsHeight);
-                    console.log(widget)
-                }
-            };
-        });*/
 
     </script>
 
